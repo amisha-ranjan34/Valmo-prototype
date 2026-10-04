@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Delivery Assurance · full flow prototype</title>
+<style>
+:root{--bg:#faf7f9;--card:#fff;--ink:#2a1822;--mut:#7d6a74;--p:#e6155f;--pd:#b30f4a;--pbg:#fff0f5;--soft:#f6f1f4;--line:#ece3e8;--frame:#2b2128;--ok:#188a4b;--okb:#e5f5ec;--warn:#9a6200;--warnb:#fff3da;--bad:#c9283a;--badb:#fdeaec;--blue:#2a5fd0;--blueb:#e8efff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1117;--card:#271a22;--ink:#f7eaf0;--mut:#b99dab;--soft:#33232d;--line:#43303b;--pbg:#3d1d2c;--pd:#ff7aa8;--okb:#173b27;--ok:#5fd18c;--warnb:#44350f;--warn:#f0c060;--badb:#4a1a22;--bad:#ff8593;--blueb:#1b2a52;--blue:#8fb0ff}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,"Segoe UI",Roboto,Inter,system-ui,sans-serif}
+.in{max-width:1180px;margin:auto;padding:22px 16px 40px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:14px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--p)}
+h1{font-size:28px;font-weight:750;letter-spacing:-.02em;margin:2px 0 4px;color:var(--ink)}
+.sub{margin:0;color:var(--mut);max-width:620px;font-size:13px}
+.ctl{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.seg{display:inline-flex;background:var(--soft);padding:4px;border-radius:13px;gap:2px;flex-wrap:wrap}
+.seg button{background:transparent;color:var(--mut);box-shadow:none;padding:7px 13px;border-radius:10px;font-weight:600;font-size:12.5px}
+.seg button.on{background:var(--card);color:var(--pd);box-shadow:0 1px 5px #0002}
+.strip{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 14px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:6px 13px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:12px;color:var(--mut);transition:.2s}
+.pill.on{background:var(--p);border-color:var(--p);color:#fff}.pill.done{background:var(--soft);color:var(--ink)}
+.clock{display:flex;align-items:center;gap:10px}.clock .m{font-size:12.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px}.stat b{font-size:21px;font-weight:700;letter-spacing:-.02em;display:block}
+.m{color:var(--mut);font-size:12px;display:block}
+.st{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:28px 0 10px;font-weight:700}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.rcard{display:grid;grid-template-columns:1fr 1.3fr 1.45fr;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 8px 28px #8a12501a}
+.rcol{padding:18px 20px;position:relative}.rcol+.rcol{border-left:1px solid var(--line)}
+.rcol+.rcol::before{content:"›";position:absolute;left:-12px;top:20px;width:24px;height:24px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;color:var(--p);font-weight:800;line-height:1;z-index:1}
+.rh{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;margin-bottom:2px}
+.rh .n{width:22px;height:22px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;display:grid;place-items:center;flex:none}
+.rh .tag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.rsub{font-size:12px;color:var(--mut);margin:0 0 14px}
+.paym{display:flex;flex-direction:column;gap:8px}
+.paym span{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:12px;color:var(--mut);font-weight:600}
+.paym span.on{border-color:var(--p);background:var(--pbg);color:var(--ink)}
+.paym em{font-style:normal;font-size:12px}.paym .on em{color:var(--pd);font-weight:700}
+.hint{font-size:11.5px;color:var(--mut);margin-top:10px}
+.flds{display:grid;grid-template-columns:1fr 1fr;gap:12px 12px}
+.fld{display:flex;flex-direction:column;gap:3px}.fl{font-size:11.5px;font-weight:700;color:var(--ink)}.src{font-size:10.5px;color:var(--mut)}
+select{font:inherit;font-size:13px;width:100%;padding:8px 9px;border-radius:10px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+select:disabled{opacity:.6;background:var(--soft)}
+.score{display:flex;align-items:center;gap:12px;margin-top:12px}.score b{font-size:42px;line-height:1;letter-spacing:-.03em}
+.gauge{position:relative;height:10px;border-radius:99px;margin:14px 0 5px;background:linear-gradient(90deg,#2fb36b 0 35%,#f2a900 35% 55%,#e2394b 55% 100%)}
+.gauge i{position:absolute;top:-4px;width:4px;height:18px;border-radius:3px;background:var(--ink);transform:translateX(-50%);box-shadow:0 0 0 2px var(--card);transition:left .3s}
+.gl{display:flex;font-size:10.5px;color:var(--mut)}
+.fr{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:6px 0;border-top:1px solid var(--line)}.fr i{display:block;font-style:normal;font-size:11px;color:var(--mut)}.fr.z{opacity:.5}.fr b{color:var(--pd)}
+.plan{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--soft);border-left:3px solid var(--p);font-size:12.5px}.plan b{display:block;margin-bottom:2px}
+.foot{font-size:11.5px;color:var(--mut);margin-top:8px}
+.wrap{display:flex;flex-wrap:wrap;gap:22px;justify-content:center}.col{width:340px;max-width:100%}
+.cl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;margin-bottom:9px}.cl i{width:9px;height:9px;border-radius:50%}
+.phone{position:relative;background:var(--card);border:6px solid var(--frame);border-radius:30px;height:640px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 40px #2a182229}
+.phone.pl{animation:pl .9s ease-out}@keyframes pl{0%{box-shadow:0 0 0 0 #e6155f88}100%{box-shadow:0 0 0 14px #e6155f00}}
+@media(prefers-reduced-motion:reduce){.phone.pl,.toast.on{animation:none}}
+.bar{background:linear-gradient(135deg,#ee2a6e,#c70f55);color:#fff;padding:13px 16px;font-weight:700;display:flex;justify-content:space-between;font-size:14px}
+.body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;background:var(--card)}
+.box{background:var(--soft);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}.box b{display:block}
+.hero{display:flex;gap:11px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px}
+.img{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#ee2a6e,#c70f55);display:grid;place-items:center;font-size:24px;flex:none}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 14px;background:var(--p);color:#fff;font-weight:650;transition:filter .15s}
+button:hover:not(:disabled){filter:brightness(.94)}
+button.g{background:var(--card);color:var(--pd);border:1px solid #f3b9cd}
+button.sm{padding:6px 12px;font-size:12px}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+button.opt{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;padding:10px 12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+button.opt.on{border-color:var(--p);background:var(--pbg)}
+.gate{display:flex;justify-content:space-between;padding:7px 11px;border-radius:10px;background:var(--warnb);font-size:12.5px;font-weight:650}.gate.pass{background:var(--okb)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.chip{display:inline-block;align-self:flex-start;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700}.c-ok{background:var(--okb);color:var(--ok)}.c-w{background:var(--warnb);color:var(--warn)}.c-b{background:var(--blueb);color:var(--blue)}.c-x{background:var(--badb);color:var(--bad)}
+.track{display:flex;gap:4px;font-size:11px;color:var(--mut)}.track div{flex:1}.track i{display:block;height:5px;border-radius:4px;background:var(--line);margin-bottom:4px}.track .d i{background:var(--p)}
+.bigok{text-align:center;padding:22px 10px}.bigok>span:first-child{font-size:36px;display:block}.bigok .m{font-size:12.5px}
+.ring{animation:rg 1s infinite;background:var(--okb)}@keyframes rg{50%{box-shadow:0 0 0 7px #1f9d5533}}
+.prog{height:8px;border-radius:9px;background:var(--line);overflow:hidden}.prog i{display:block;height:100%;background:var(--p)}
+.toast{position:absolute;top:48px;left:10px;right:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 11px;box-shadow:0 10px 26px #0003;font-size:12px;display:none;z-index:5}.toast.on{display:block;animation:dn .3s ease-out}@keyframes dn{from{transform:translateY(-20px);opacity:0}}
+.toast b{color:var(--p);font-size:11px;display:block}
+#log{margin:0;padding:6px 14px;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:16px;max-height:240px;overflow:auto}#log li{font-size:12.5px;padding:7px 0;border-top:1px solid var(--line)}#log li:first-child{border:0}#log s{text-decoration:none;color:var(--mut);margin-right:6px}
+@media(max-width:900px){.rcard{grid-template-columns:1fr}.rcol+.rcol{border-left:0;border-top:1px solid var(--line)}.rcol+.rcol::before{left:50%;top:-12px;transform:translateX(-50%) rotate(90deg)}}
+</style></head><body><div class="in">
+<header class="top"><div><div class="eyebrow">Meesho · Valmo</div><h1>Delivery Assurance</h1><p class="sub">One order, three apps. Act in any app and the other two react. The customer sees only what they must act on; everything else stays in the rider app and hub console.</p></div><div class="ctl"><span class="m">Scenario</span><div class="seg" id="chips"></div></div></header>
+<div class="strip"><div class="pills" id="pills"></div><div class="clock"><span class="m" id="clk"></span><button class="g sm" id="skip" onclick="A.skip48()">Skip 48 hours</button></div></div>
+<div class="stats" id="stats"></div>
+<div class="st">Risk engine</div>
+<div id="riskp"></div>
+<div class="st">Live order across three apps</div>
+<div class="wrap">
+<div class="col"><div class="cl"><i style="background:#e6155f"></i>Customer app · Meesho</div><div class="phone" id="p-cust"><div class="bar"><span>My order</span><span>#MS48213</span></div><div class="body" id="cust"></div><div class="toast" id="t-cust"></div></div></div>
+<div class="col"><div class="cl"><i style="background:#2a5fd0"></i>Rider app · Valmo</div><div class="phone" id="p-rider"><div class="bar"><span>Delivery task</span><span id="rs"></span></div><div class="body" id="rider"></div><div class="toast" id="t-rider"></div></div></div>
+<div class="col"><div class="cl"><i style="background:#188a4b"></i>Hub console · Delivery Intelligence</div><div class="phone" id="p-hub"><div class="bar"><span>Hub console</span><span id="hs"></span></div><div class="body" id="hub"></div><div class="toast" id="t-hub"></div></div></div>
+</div>
+<div class="st">Guardrails (must hold in every scenario)</div>
+<div class="stats" id="guard"></div>
+<div class="st">Event log</div><ul id="log"></ul></div>
+<script>
+const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,"0");
+const SC={a:{n:"Sector 56 · strong network",item:"Women's Sneakers",em:"👟",price:899,addr:"B-112, Sector 56, Noida",ok:1,far:0,newc:0,hist:0,hp:0,fit:1,night:0,net:"high",dist:84,hubs:[["Noida-56 Hub",1.1],["Noida-62 Hub",2.9],["Noida-49 Point",3.6]],sell:[["Sharma Footwear","Footwear store",.6,720,1,0,"Shop 14, Sector 56 market"],["Metro Shoe Hub","Shoe shop",1.1,690,1,1,"Metro Plaza, Sector 62"],["Aarav Fashion","Fashion outlet",1.8,650,0,1,"Block C, Sector 50"]]},
+b:{n:"Salarpur village · weak network",item:"Cotton Bedsheet",em:"🛏️",price:520,addr:"Main road, Salarpur village",ok:0,far:1,newc:1,hist:0,hp:1,fit:0,night:1,net:"low",dist:null,hubs:[["Noida-49 Point",5.2],["Noida-62 Hub",6],["Noida-56 Hub",7.4]],sell:[["Shree Home Textiles","Home textiles",1,400,1,1,"Near bus stand, Salarpur"],["Krishna Bedding","Bedding shop",1.6,380,0,1,"Main market, Sector 49"],["Salarpur General Store","General store",2.2,360,1,0,"Village chowk, Salarpur"]]}};
+const SLOTS=["Sat 3 Oct · 1–4 PM","Sun 4 Oct · 10 AM–1 PM","Sun 4 Oct · 4–7 PM","Mon 5 Oct · 10 AM–1 PM"];
+const RSP={acc:"Takes the parcel",ref:"Refuses: changed my mind",slot:"Not available now: another slot"};
+const RXR=["Size issue","Wrong product","Damaged product","Quality issue"],RXP=["Wrong product","Damaged product"];
+const MISS=2,REFUSED="Customer refused the parcel";
+const RR={ref:["Changed my mind","Ordered by mistake","Found it cheaper elsewhere","Delivery took too long","Does not want to pay (COD)","Other"],bad:["Wrong item","Damaged item","Seal or packaging tampered","Size or colour mismatch","Other"],none:[REFUSED,"Phone unreachable or switched off","Customer not at address","Address not found","Customer asked to come later","Premises locked","Other"]};
+const rkey=()=>S.resp=="ref"?"ref":S.resp=="bad"?"bad":"none";
+const LB={ver:"Verified Attempt",no:"No Attempt",cov:"Coverage Limited"},CL={ver:"c-ok",no:"c-x",cov:"c-b"};
+const DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let S,T=0,H=0,iv=null,LOG=[],TT={},TM={},M={orders:0,del:0,avoid:0,rto:0,saved:0,extra:0,cred:0,taps:0};
+function clk(h=0,tm){const d=new Date(2026,9,2,11,20+T+(H+h)*60);let x=d.getHours();const a=x>=12?"PM":"AM";x=x%12||12;const t=x+":"+pad(d.getMinutes())+" "+a;return tm?t:DN[d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()]+", "+t}
+const eta=km=>Math.round(km*3.5+2),elig=x=>x[4]&&x[2]<=2.5;
+function reset(k){clearInterval(iv);TT={};S={k,c:SC[k],rk:{dist:k=="b"?"far":"near",buyer:SC[k].newc?"new":"repeat",addr:SC[k].ok?"known":"unclear",city:k=="b"?"rural":"metro"},ph:"cart",pay:"COD",tap:0,skip:0,att:1,slot:0,hub:0,nav:0,sel:null,prog:0,fin:null,capped:0,ask:{},rx:{chk:0,fine:0,on:0,type:null,reason:null,photo:0,st:null}};clean();render()}
+function clean(){Object.assign(S,{askslot:0,cslot:0,refusedDoor:0,nav:0,hub:0,contacted:0,unreach:0,reason:null,resp:null,calls:0,missed:0,ring:0,pickup:0,photo:0,res:null,cred:0,cleared:0,flag:0,did:null})}
+function emit(f,t,x){T+=3;LOG.unshift({c:clk(0,1),f,t,x});LOG.length=Math.min(LOG.length,40);
+ if(["cust","rider","hub"].includes(t)){TT[t]=[f,x];const e=$("#p-"+t);e.classList.remove("pl");void e.offsetWidth;e.classList.add("pl");clearTimeout(TM[t]);TM[t]=setTimeout(()=>{TT[t]=null;render()},5000)}render()}
+const RK=[["pay","Payment",[["COD","Cash on delivery",25],["Prepaid","Prepaid",0]]],["dist","Distance from hub",[["near","Near · under 3 km",0],["mid","Medium · 3 to 6 km",8],["far","Far · over 6 km",15]]],["buyer","Buyer",[["repeat","Repeat buyer",0],["new","New buyer",10]]],["addr","Address",[["known","Known address",0],["new","New address",10],["unclear","Unclear or unmapped",20]]],["city","City type",[["metro","Metro",0],["t2","Tier 2 city",5],["t3","Tier 3 town",10],["rural","Rural or village",15]]]];
+const rkv=k=>k=="pay"?S.pay:S.rk[k];
+function risk(){let s=5;const f=[];RK.forEach(([k,n,o])=>{const x=o.find(y=>y[0]==rkv(k));if(x[2]){s+=x[2];f.push(n+": "+x[1]+" +"+x[2])}});return{s,f,l:s>=55?"High":s>=35?"Medium":"Low"}}
+function planFor(l){return l=="High"?"Dispatch from the micro-location hub. Prepaid nudge (₹20 off) sent to the customer. Confirmation call before delivery. Best-rated rider.":l=="Medium"?"Dispatch from the home hub with a confirmation call to the customer the evening before.":"Standard dispatch from the home hub. 1–4 PM slot. No extra steps."}
+function riskPanel(){const r=risk(),lock=S.ph!="cart",pc=S.pay=="COD";
+ const SRC={dist:"Hub and drop pin",buyer:"Order history",addr:"Address graph",city:"Pincode data"};
+ const sel=RK.filter(x=>x[0]!="pay").map(([k,n,o])=>`<label class="fld"><span class="fl">${n}</span><select ${lock?"disabled":""} onchange="A.set('${k}',this.value)">${o.map(y=>`<option value="${y[0]}" ${y[0]==rkv(k)?"selected":""}>${y[1]}</option>`).join("")}</select><span class="src">From ${SRC[k]}</span></label>`).join("");
+ const rows=RK.map(([k,n,o])=>{const x=o.find(y=>y[0]==rkv(k));return `<div class="fr ${x[2]?"":"z"}"><span>${n}<i>${x[1]}</i></span><b>+${x[2]}</b></div>`}).join("");
+ $("#riskp").innerHTML=`<div class="rcard">
+ <div class="rcol"><div class="rh"><span class="n">1</span>Customer choice<span class="tag">Customer</span></div><p class="rsub">Chosen by the customer at checkout in the app. Not editable here.</p><div class="paym"><span class="${pc?"on":""}">Cash on delivery <em>+25</em></span><span class="${pc?"":"on"}">Prepaid <em>+0</em></span></div><div class="hint">Switch payment in the customer app to see the score move.</div></div>
+ <div class="rcol"><div class="rh"><span class="n">2</span>System signals<span class="tag">Auto</span></div><p class="rsub">Picked by the system from past data. ${lock?"Locked once the order is placed.":"Change to simulate another order."}</p><div class="flds">${sel}</div></div>
+ <div class="rcol"><div class="rh"><span class="n">3</span>Risk score and dispatch<span class="tag">Result</span></div><div class="score"><b>${r.s}</b><span class="chip ${r.l=="High"?"c-x":r.l=="Medium"?"c-w":"c-ok"}">${r.l} risk</span></div><div class="gauge"><i style="left:${Math.min(r.s,100)}%"></i></div><div class="gl"><span style="width:35%">Low</span><span style="width:20%">Medium</span><span style="width:45%">High</span></div><div style="margin-top:8px"><div class="fr"><span>Base score</span><b>5</b></div>${rows}</div><div class="plan"><b>Dispatch plan</b>${planFor(r.l)}</div></div>
+ </div><div class="foot">The score only picks the lightest action. It never blocks an order or bans COD.</div>`}
+function gates(){const c=S.c;if(c.net=="low")return{d:null,w:null,p:0,e:0,c:S.calls>0};const w=20+40*S.calls+(S.photo?30:0);return{d:c.dist,w,p:c.dist<=150,e:w>=90,c:S.calls>0}}
+function ev(){if(S.c.net=="low")return"cov";const g=gates();return g.p&&g.e&&g.c?"ver":"no"}
+const A={
+ pay(v){if(S.ph!="cart"||S.pay==v)return;S.pay=v;M.taps++;emit("cust","hub","Customer chose "+(v=="COD"?"Cash on delivery":"Prepaid (saves ₹20)")+" at checkout. Risk re-scored.")},
+ rxcheck(){S.rx.chk=1;M.taps++;emit("cust","hub","Customer opened the parcel and is checking the item.")},
+ rxfine(){S.rx.fine=1;M.taps++;emit("cust","hub","Customer checked the item. Everything is fine.")},
+ rxopen(){S.rx.on=1;render()},
+ rxtype(t){S.rx.type=t;render()},
+ rxwhy(r){S.rx.reason=r;S.rx.photo=0;render()},
+ rxphoto(){S.rx.photo=1;M.taps++;emit("cust","hub","Customer added a photo of the item.")},
+ rxsend(){const R=S.rx,T=R.type=="ret"?"Return":"Exchange";M.taps++;
+  if(RXP.includes(R.reason)){R.st="pending";emit("cust","hub",T+" request: "+R.reason+". Photo attached. Needs hub cross-check.");emit("sys","cust","We are checking your photo. We will update you here.")}
+  else{R.st="ok";emit("cust","hub",T+" request: "+R.reason+". Approved automatically, no photo needed.");emit("sys","cust",T+" approved.")}},
+ rxok(){S.rx.st="ok";emit("hub","cust",(S.rx.type=="ret"?"Return":"Exchange")+" approved. Photo matches the hub record.")},
+ rxno(){S.rx.st="no";emit("hub","cust",(S.rx.type=="ret"?"Return":"Exchange")+" not approved. Photo does not match the hub record.")},
+ set(k,v){if(S.ph!="cart")return;if(k=="pay")S.pay=v;else S.rk[k]=v;render()},
+ tap(){S.tap=1;if(S.rk.addr=="unclear")S.rk.addr="new";M.taps++;emit("cust","hub","Customer confirmed the pre-filled pin (1 tap). Address risk removed.")},
+ prepay(){S.pay="Prepaid";M.taps++;emit("cust","hub","Customer took the optional prepaid reward (1 tap). COD risk removed.")},
+ keep(){S.skip=1;render()},
+ place(){M.orders++;S.ph="new";const r=risk();emit("cust","hub","Order placed. Risk scored "+r.s+" ("+r.l+"). Routed to the right hub.")},
+ dispatch(){S.ph="out";emit("hub","cust","Arriving today, 1–4 PM. Nothing to do.");emit("hub","rider","New task: "+S.c.item+" (attempt "+S.att+" of 3). Plan: "+planFor(risk().l))},
+ reach(){S.ph="door";emit("rider","hub","Rider reached the door (location confirmed)")},
+ call(){S.calls++;S.ring=1;emit("rider","cust","Masked call from your delivery partner")},
+ answer(){S.ring=0;S.pickup=1;M.taps++;emit("cust","rider","Customer picked up the call")},
+ ignore(){S.ring=0;S.missed++;emit("sys","rider","Call not answered ("+S.missed+" of "+MISS+")")},
+ choose(k){if(k=="slot"){S.askslot=1;M.taps++;return emit("cust","rider","Customer: not available now, choosing another slot")}
+ S.resp=k;M.taps++;emit("cust","rider","Customer: "+RSP[k])},
+ photo(){S.photo=1;render()},
+ why(i){const x=RR[rkey()][i];if(x==REFUSED)return A.refused();S.reason=x;render()},
+ refused(){if(S.ph!="door")return;S.resp="ref";S.reason=REFUSED;S.refusedDoor=1;S.unreach=0;S.ph="sell";emit("rider","hub","Failed attempt reason: "+REFUSED+". Order cancelled.");emit("sys","cust","Order cancelled. Nothing to pay.");emit("hub","rider","Order cancelled. Nearby sellers matched: choose one.")},
+ deliver(){S.ph="done";S.fin="delivered";M.del++;if(S.att>1)M.saved+=120;emit("rider","hub","Delivered"+(S.att>1?" on reattempt. Avoided a ₹120 return.":". Forward cost only."));emit("hub","cust","Delivered. Thanks for shopping with us.")},
+ submit(){S.res=ev();S.cred=S.res=="ver"?22+(S.rk.dist=="far"?6:0):S.res=="cov"?10:0;M.cred+=S.cred;emit("rider","hub","Failed attempt reason: "+S.reason);emit("rider","hub","Attempt recorded: "+LB[S.res]+(S.cred?". Effort credit ₹"+S.cred:". No deduction"));branch()},
+ did(v){S.did=v;M.taps++;emit("cust","hub","Customer says "+(v=="y"?"the rider came":"nobody came"))},
+ clear(){S.cleared=1;emit("hub","rider","Reviewer cleared the attempt as genuine.");branch()},
+ fake(){S.flag=1;S.cleared=1;emit("hub","rider","Attempt flagged. No automatic deduction.");branch()},
+ slot(i){S.slot=i;render()},
+ slotok(){M.taps++;emit("cust","hub","Customer confirmed: "+SLOTS[S.slot])},
+ newslot(i){S.slot=i;S.resp="slot";S.cslot=1;S.askslot=0;S.ph="resched";M.taps++;emit("cust","hub","Customer is not available now and chose: "+SLOTS[i]);emit("sys","rider","Customer rescheduled to "+SLOTS[i]+". Not a failed attempt.");emit("sys","cust","New slot confirmed: "+SLOTS[i])},
+ contact(){M.taps++;S.contacted=1;S.unreach=0;S.ph="resched";S.slot=0;emit("cust","rider","Customer called the delivery partner and wants the order delivered.");emit("sys","cust","Thanks for getting in touch. Next attempt booked: "+SLOTS[0]);emit("hub","rider","Hold stopped. Reattempt booked: "+SLOTS[0])},
+ cancel(){M.taps++;S.unreach=0;S.resp="ref";S.ph="tohub";emit("cust","hub","Customer cancelled the order");emit("hub","rider","Order cancelled. Take the parcel to the nearest hub.")},
+ again(){if(!S.cslot)S.att++;M.extra+=21;clean();S.ph="out";emit("hub","cust","Out for delivery: "+SLOTS[S.slot]);emit("hub","rider","Reattempt "+S.att+" of 3 assigned")},
+ pickHub(i){if(!S.nav){S.hub=i;render()}},
+ nav(){S.nav=1;const h=S.c.hubs[S.hub];emit("rider","hub","En route to "+h[0]+", "+h[1]+" km, "+eta(h[1])+" min")},
+ scan(){S.ph="held";S.holdEnd=clk(48);emit("rider","hub","Parcel scanned in at "+S.c.hubs[S.hub][0]+". 48-hour hold started.")},
+ skip48(){if(S.ph!="held")return;H+=48;S.ph="sell";if(S.unreach)emit("sys","cust","No contact in 48 hours. Your order is now cancelled. Nothing to pay.");emit("hub","rider","Hold ended. Nearby sellers matched: choose one.")},
+ connect(i){const x=S.c.sell[i];S.ask[i]="wait";emit("rider","hub","Connecting with "+x[0]+" (masked call)");setTimeout(()=>{S.ask[i]=x[5]?"yes":"no";emit("sys","rider",x[0]+(x[5]?" is ready to buy at ₹"+x[3]:" is not interested"));emit("sys","hub",x[0]+(x[5]?" accepted the offer":" declined"))},1200)},
+ seller(i){S.sel=i;S.prog=0;S.ph="go";clearInterval(iv);iv=setInterval(()=>{S.prog=Math.min(1,S.prog+.05);if(S.prog>=1)clearInterval(iv);rider();hub()},250);const x=S.c.sell[i];emit("rider","hub","Navigating to "+x[0]+": "+x[6]+", "+x[2]+" km, "+eta(x[2])+" min")},
+ hand(){const x=S.c.sell[S.sel];S.ph="done";S.fin="sold";M.avoid++;M.saved+=120;M.extra+=21;emit("rider","hub","Handed to "+x[0]+" for ₹"+x[3]+". Reverse leg avoided.")},
+ ret(){S.ph="done";S.fin="ret";M.rto++;M.saved+=40;emit("hub","rider","Consolidated return booked (₹120 → ₹80)")}};
+function branch(){
+ if(S.res=="no"&&!S.cleared){S.ph="review";return emit("sys","hub","Evidence missing in a strong network. Sent to the exception queue.")}
+ if(S.flag){if(S.att>=3){S.ph="ret";S.capped=1;emit("sys","cust","We couldn't deliver this order. Refund is on its way.");return emit("sys","hub","3 attempts used. Consolidated return queued.")}
+  S.ph="resched";S.slot=0;emit("sys","cust","We couldn't reach you. Next attempt booked: "+SLOTS[0]);return emit("sys","rider","Next attempt auto-booked: "+SLOTS[0])}
+ if(!S.resp){S.ph="tohub";S.unreach=1;emit("sys","cust","We couldn't reach you. Your order is NOT cancelled yet. Contact your delivery partner within 48 hours, otherwise it will be cancelled.");return emit("sys","rider","Customer not reachable after "+MISS+" calls. Take the parcel to the nearest hub.")}
+ if(S.resp=="ref"){S.ph="tohub";emit("sys","cust","Order cancelled. Nothing to pay.");return emit("sys","rider","Take the parcel to the nearest hub.")}
+ S.ph="ret";emit("sys","cust","Sorry about the item. Your refund is on its way.");emit("sys","hub","Not eligible for resale. Direct return to seller.")}
+function cust(){const c=S.c,P=S.ph,r=risk(),pr=S.pay=="COD"?c.price:c.price-20;
+ let h=`<div class="hero"><div class="img">${c.em}</div><div><b>${c.item}</b><span class="m">₹${pr} · ${S.pay=="COD"?"Cash on delivery":"Prepaid"}</span></div></div>`;
+ if(P=="cart"){h+=`<div class="box"><span class="m">Delivering to</span><b>${c.addr}</b>`+(S.rk.addr!="unclear"?(S.tap?`<span class="chip c-ok">Pin confirmed</span>`:`<span class="chip c-ok">Location matched</span>`):`<span class="chip c-w">Quick check</span><span class="m">Is the pin by the main road your gate?</span><button class="g" onclick="A.tap()">Yes, that's right</button>`)+`</div>`;
+  h+=`<div class="box"><b>Payment</b><span class="m">Choose how you want to pay</span></div>`+[["COD","Cash on delivery",c.price],["Prepaid","Pay now and save ₹20",c.price-20]].map(([v,t,a])=>`<button class="opt ${S.pay==v?"on":""}" onclick="A.pay('${v}')"><span>${t}</span><span class="m">₹${a}</span></button>`).join("");
+  if(r.l=="High"&&S.pay=="COD"&&!S.skip)h+=`<div class="box"><b>Pay ₹${c.price-20} now and save ₹20</b><span class="m">Optional. COD stays available.</span><div class="row"><button onclick="A.prepay()">Pay now</button><button class="g" onclick="A.keep()">Keep COD</button></div></div>`;
+  return $("#cust").innerHTML=h+`<span class="m" style="text-align:center">No extra OTP or forms.</span><button onclick="A.place()">Place order · ₹${pr}</button>`}
+ const dn=S.fin=="delivered";
+ h+=`<div class="track">${["Packed","Shipped","Out for delivery","Delivered"].map((x,i)=>`<div class="${[1,1,P!="new",dn][i]?"d":""}"><i></i>${x}</div>`).join("")}</div>`;
+ if(P=="new")h+=`<div class="box"><b>Order confirmed</b><span class="m">Nothing to do. We'll update you here.</span></div>`;
+ if(P=="out")h+=`<div class="box"><span class="chip c-ok">Heads-up</span><b>Arriving today, 1–4 PM</b><span class="m">Keep your phone nearby.</span></div>`;
+ if(P=="door"){if(S.ring)h+=`<div class="box ring"><b>📞 Incoming call</b><span class="m">Your delivery partner is at the door</span><div class="row"><button onclick="A.answer()">Answer</button><button class="g" onclick="A.ignore()">Ignore</button></div></div>`;
+  else if(S.pickup&&!S.resp&&S.askslot)h+=`<div class="box"><b>Pick a new slot</b><span class="m">Choose a time that works for you.</span></div>`+SLOTS.map((x,i)=>i?`<button class="opt" onclick="A.newslot(${i})">${x}</button>`:"").join("");
+  else if(S.pickup&&!S.resp)h+=`<div class="box"><b>What would you like to do?</b></div>`+Object.keys(RSP).map(k=>`<button class="g" onclick="A.choose('${k}')">${{acc:"Take the parcel",ref:"Refuse: changed my mind",slot:"Not available now: choose another slot"}[k]}</button>`).join("");
+  else h+=`<div class="box"><b>Your delivery partner is at the door</b><span class="m">${S.resp?"You chose: "+RSP[S.resp]:"Keep your phone nearby."}</span></div>`}
+ if(P=="review")h+=`<div class="box"><span class="chip c-w">One tap</span><b>Did someone come to deliver today?</b>`+(S.did?`<span class="chip c-ok">Thanks, noted</span>`:`<div class="row"><button onclick="A.did('y')">Yes</button><button class="g" onclick="A.did('n')">No</button></div>`)+`</div>`;
+ if(P=="resched"&&S.cslot)h+=`<div class="box bigok"><span>📅</span><b>New slot confirmed</b><span class="m">${SLOTS[S.slot]}. Keep your phone nearby.</span></div>`;
+ else if(P=="resched")h+=`<div class="box"><b>${S.contacted?"Thanks for getting in touch":"We couldn't reach you"}</b><span class="m">Next attempt is booked: ${SLOTS[0]}. Change it only if needed.</span></div>`+SLOTS.map((x,i)=>`<button class="opt ${S.slot==i?"on":""}" onclick="A.slot(${i})">${x}</button>`).join("")+`<button onclick="A.slotok()">Confirm slot</button><button class="g" onclick="A.cancel()">Cancel order instead</button><span class="m">Do nothing and the booked slot stays.</span>`;
+ if(S.unreach&&["tohub","held"].includes(P))h+=`<div class="box"><span class="chip c-w">Action needed</span><b>We couldn't reach you</b><span class="m">Your order is not cancelled yet. Please contact your delivery partner within 48 hours.${P=="held"?" Valid until "+S.holdEnd+".":""} If we don't hear from you, the order will be cancelled.</span></div><button onclick="A.contact()">Call delivery partner</button>`;
+ if((S.unreach?(["sell","go"].includes(P)||S.fin=="sold"):(["tohub","held","sell","go"].includes(P)||S.fin=="sold")))h+=`<div class="box bigok"><span>${S.unreach?"📵":"✅"}</span><b>Order cancelled</b><span class="m">${S.unreach?"We didn't hear back within 48 hours. ":""}Nothing to pay.${S.pay=="Prepaid"?" Your refund arrives in 3 to 5 days.":""}</span></div>`;
+ if(P=="ret"||S.fin=="ret")h+=`<div class="box bigok"><span>↩️</span><b>${S.capped?"We couldn't deliver this order":S.resp=="bad"?"Sorry about the item":"Order cancelled"}</b><span class="m">Your refund is on its way.</span></div>`;
+ if(dn){h+=`<div class="box bigok"><span>🎉</span><b>Delivered</b><span class="m">Your ${c.item} arrived. Open the parcel and check your item.</span></div>`;const R=S.rx,tl=R.type=="ret"?"Return":"Exchange",need=RXP.includes(R.reason);
+  if(!R.chk)h+=`<button onclick="A.rxcheck()">I opened it and checked the item</button>`;
+  else if(R.fine)h+=`<span class="chip c-ok">Thanks, all good</span>`;
+  else if(!R.on&&!R.st)h+=`<div class="box"><b>How is your item?</b></div><button onclick="A.rxfine()">Everything is fine</button><button class="g" onclick="A.rxopen()">Return or exchange</button>`;
+  else if(!R.st){h+=`<div class="box"><b>Return or exchange</b><span class="m">What would you like to do?</span></div><div class="row"><button class="opt ${R.type=="ret"?"on":""}" onclick="A.rxtype('ret')">Return</button><button class="opt ${R.type=="exc"?"on":""}" onclick="A.rxtype('exc')">Exchange</button></div>`;
+   if(R.type)h+=`<div class="box"><b>What is the problem?</b></div>`+RXR.map(x=>`<button class="opt ${R.reason==x?"on":""}" onclick="A.rxwhy('${x}')">${x}</button>`).join("");
+   if(need)h+=`<div class="box"><b>Add a photo of the item</b><span class="m">A photo of the item is required for a wrong or damaged product. Our hub will verify it before approving.</span></div><button class="g" onclick="A.rxphoto()" ${R.photo?"disabled":""}>${R.photo?"Photo added ✓":"📷 Add photo"}</button>`;
+   h+=`<button ${R.type&&R.reason&&(!need||R.photo)?"":"disabled"} onclick="A.rxsend()">Submit ${R.type=="exc"?"exchange":"return"} request</button>`}
+  else if(R.st=="pending")h+=`<div class="box"><span class="chip c-w">Under review</span><b>${tl} request: ${R.reason}</b><span class="m">Our hub is checking your photo. We will update you here.</span></div>`;
+  else if(R.st=="ok")h+=`<div class="box bigok"><span>✅</span><b>${tl} approved</b><span class="m">${R.type=="ret"?"We will pick up the item. Your refund follows after pickup.":"We will pick up this item and send the replacement."}</span></div>`;
+  else h+=`<div class="box"><span class="chip c-x">Not approved</span><b>${tl} request: ${R.reason}</b><span class="m">We could not verify the photo against the item we shipped. Please contact support if this is a mistake.</span></div>`}
+ $("#cust").innerHTML=h}
+function reasonBox(){const k=rkey(),t=k=="ref"?"Why did the customer refuse?":k=="bad"?"What is wrong with the item?":"Why could the parcel not be delivered?";
+ return `<div class="box"><b>Reason for failed attempt</b><span class="m">${t} Select one to submit.</span></div>`+RR[k].map((x,i)=>`<button class="opt ${S.reason==x?"on":""}" onclick="A.why(${i})">${x}</button>`).join("")}
+function rider(){const c=S.c,P=S.ph,g=gates();let h=`<div class="hero"><div class="img">${c.em}</div><div><b>${c.item}</b><span class="m">${c.addr} · ${S.pay=="COD"?"COD ₹"+c.price:"Prepaid"}</span></div></div>`;
+ const E=x=>$("#rider").innerHTML=h+x;
+ if(P=="cart"||P=="new")return E(`<span class="m">${P=="cart"?"No task yet.":"Task assigned soon. Waiting for the hub."}</span>`);
+ if(P=="out")return E(`<div class="box"><span class="chip c-b">Attempt ${S.att} of 3</span><span class="m">Slot 1–4 PM · Network here: ${c.net}</span></div><button onclick="A.reach()">I'm at the door</button>`);
+ if(P=="door"){const gt=(ok,t)=>`<div class="gate ${ok?"pass":""}"><span>${t}</span><span>${ok?"✓":"✗"}</span></div>`;
+  h+=`<div class="box"><span class="chip c-w">At the door</span><b>${S.resp?"Customer: "+RSP[S.resp]:S.ring?"Calling… ringing":S.pickup?"Customer is on the line":"Not answered yet"}</b><span class="m">Unanswered calls: ${S.missed} of ${MISS}</span></div><button class="g" ${S.ring||S.resp?"disabled":""} onclick="A.call()">${S.calls?"Call again":"Call customer (masked)"}</button>`;
+  if(S.resp=="acc")return E(`<button onclick="A.deliver()">Mark delivered</button>`);
+  if(S.resp||S.missed>=MISS)h+=`<button class="g" onclick="A.photo()">${S.photo?"Photo saved ✓":"Take doorstep photo"}</button>`+reasonBox()+gt(g.p,"Presence: "+(g.d==null?"weak GPS":g.d+" m (max 150)"))+gt(g.e,"Effort: "+(g.w==null?"weak signal":g.w+" s (min 90)"))+gt(g.c,"Contact: "+S.calls+" masked call(s)")+`<span class="m">Measured by the system from your calls, photo and location.</span><div class="box"><span class="m">If submitted now</span><b>${LB[ev()]}</b></div><button ${S.photo&&S.reason?"":"disabled"} onclick="A.submit()">Submit attempt</button>`;
+  else h+=`<span class="m">Call the customer. After ${MISS} unanswered calls, or their reply, you can submit. No answer means the parcel goes to the nearest hub.</span>`+(S.calls>0&&!S.ring?reasonBox():"");
+  return E("")}
+ if(S.res)h+=`<div class="box"><span class="chip ${CL[S.res]}">${LB[S.res]}</span><span class="m">Reason: ${S.reason}</span><span class="m">${S.res=="ver"?"All three gates passed. Credit ₹"+S.cred+" added.":S.res=="cov"?"Signal too weak to judge. No adverse action. Credit ₹10.":"Evidence missing. Under review, no automatic deduction."}</span></div>`;
+ if(P=="review")h+=`<span class="m">Waiting for the hub reviewer.</span>`;
+ if(P=="resched")h+=`<div class="box"><b>Next attempt booked</b><span class="m">${SLOTS[S.slot]}. ${S.cslot?"Customer asked for another slot, so no failed attempt is recorded. ":""}No taps needed.</span></div>`;
+ if(P=="ret")h+=`<div class="box"><b>Return to hub</b><span class="m">Direct return to the seller is queued.</span></div>`;
+ if(P=="tohub")h+=`<div class="box"><b>Take the parcel to the nearest hub</b><span class="m">Held there for 48 hours.</span></div>`+c.hubs.map((x,i)=>`<button class="opt ${i==S.hub?"on":""}" onclick="A.pickHub(${i})"><span>${x[0]}${i?"":" · Nearest"}</span><span class="m">${x[1]} km · ${eta(x[1])} min</span></button>`).join("")+`<button class="g" ${S.nav?"disabled":""} onclick="A.nav()">${S.nav?"On the way":"Start navigation"}</button><button ${S.nav?"":"disabled"} onclick="A.scan()">Scan parcel at hub</button>`;
+ if(P=="held")h+=`<div class="box"><span class="chip c-ok">At ${c.hubs[S.hub][0]}</span><b>Held for 48 hours</b><span class="m">Until ${S.holdEnd}. Sellers appear here after that.${S.unreach?" If the customer contacts you first, the order is reattempted instead.":""}</span></div>`;
+ if(P=="sell")h+=`<div class="box"><span class="chip c-w">${S.refusedDoor?"Order cancelled":"Hold ended"}</span><b>Eligible nearby sellers</b><span class="m">Connect with a seller. Navigation opens for the one who is ready to buy.</span></div>`+c.sell.map((x,i)=>{const a=S.ask[i];return `<div class="box"><b>${x[0]}</b><span class="m">${x[1]} · ${x[2]} km · ${eta(x[2])} min · offers ₹${x[3]}</span>`+(!elig(x)?`<span class="chip c-x">Not eligible: ${x[4]?"too far":"seller not opted in"}</span>`:a=="wait"?`<span class="chip c-w">Calling…</span>`:a=="yes"?`<span class="chip c-ok">Ready to buy</span><span class="m">📍 ${x[6]}</span><button onclick="A.seller(${i})">Navigate to seller</button>`:a=="no"?`<span class="chip c-x">Not interested</span>`:`<span class="chip c-ok">Eligible</span><button class="g" onclick="A.connect(${i})">Connect (masked call)</button>`)+`</div>`}).join("")+(c.sell.every((x,i)=>!elig(x)||S.ask[i]=="no")?`<button class="g" onclick="A.ret()">No buyer: batch return (₹80)</button>`:"");
+ if(P=="go"){const x=c.sell[S.sel],f=S.prog,T2=["Head straight for 300 m","Turn right at the signal","Turn left near the market","Seller is on your right"],d=f*300,q=d<90?[40+d,85]:d<140?[130,85-(d-90)]:[130+(d-140),35];
+  h+=`<div class="box" style="background:var(--ok);color:#fff"><b>${f>=1?"You have arrived":T2[f<.25?0:f<.5?1:f<.8?2:3]}</b></div><svg viewBox="0 0 340 120" style="width:100%;border-radius:12px;background:var(--soft)"><polyline points="40,85 130,85 130,35 290,35" fill="none" stroke="#e6155f" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="290" cy="35" r="9" fill="#d62839" stroke="#fff" stroke-width="3"/><circle cx="${q[0]}" cy="${q[1]}" r="8" fill="#1f9d55" stroke="#fff" stroke-width="3"/></svg><div class="box"><b>${x[0]}</b><span class="m">📍 ${x[6]} · ${x[1]}</span><span class="m">${(x[2]*(1-f)).toFixed(1)} km left · ${f>=1?0:Math.max(1,Math.ceil(eta(x[2])*(1-f)))} min</span><div class="prog"><i style="width:${f*100}%"></i></div></div><button ${f>=1?"":"disabled"} onclick="A.hand()">Hand over parcel · collect ₹${x[3]}</button>`}
+ if(P=="done")h+=`<div class="box"><span class="chip c-ok">Task complete</span><b>${{delivered:"Delivered",sold:"Sold to a nearby seller",ret:"Returned to seller"}[S.fin]}</b></div>`;
+ E("")}
+function hub(){const c=S.c,r=risk(),P=S.ph;
+ if(P=="cart")return $("#hub").innerHTML=`<div class="box"><b>Waiting for an order</b><span class="m">Risk is scored the moment the customer places it.</span></div>`;
+ let h=`<div class="box"><b>Order risk ${r.s} · ${r.l}</b><span class="m">${r.f.join(" · ")||"No risk signals"}</span><span class="m">The score only picks the lightest action. It never blocks an order or bans COD.</span></div><div class="box"><b>Route</b><span class="m">${S.rk.addr=="unclear"||S.rk.dist=="far"?"Address graph and landmark hints picked the hub that serves this micro-location, not the pincode hub.":"Pincode and address agree. Routed to the home hub."}</span></div>`;
+ const E=x=>$("#hub").innerHTML=h+x;
+ if(P=="new")return E(`<div class="box"><b>Dispatch plan: ${r.l} risk</b><span class="m">${planFor(r.l)}</span></div><button onclick="A.dispatch()">Dispatch to rider</button>`);
+ if(P=="out")return E(`<div class="box"><b>Out for delivery</b><span class="m">Attempt ${S.att} of 3. Waiting for the rider.</span></div>`);
+ if(P=="door"){const g=gates();h+=`<div class="box"><b>Rider at the door</b><span class="m">Customer: ${S.resp?RSP[S.resp]:"no reply yet"}<br>Presence ${g.d==null?"weak GPS":g.d+" m"} · Effort ${g.w==null?"weak signal":g.w+" s"} · Calls ${S.calls} (${S.missed} missed)<br>Rider reason: ${S.reason||"not selected yet"}</span></div>`;return E("")}
+ if(S.res)h+=`<div class="box"><b>Verify</b><span class="chip ${CL[S.res]}">${LB[S.res]}</span><span class="m">Rider reason: ${S.reason}</span><span class="m">A failed attempt counts only when presence, effort and contact are confirmed.</span></div>`;
+ if(P=="review")h+=`<div class="box"><b>Exception queue</b><span class="m">A person decides. Not an automatic penalty.<br>Customer says: ${S.did?(S.did=="y"?"the rider came":"nobody came"):"not asked yet"}</span><div class="row"><button onclick="A.clear()">Genuine, clear it</button><button class="g" onclick="A.fake()">Not genuine</button></div></div>`;
+ if(P=="resched")h+=`<div class="box"><b>Reattempt booked</b><span class="m">${SLOTS[S.slot]}. ${S.cslot?"Customer asked for this slot, so it does not count as a failed attempt. Extra trip costs about ₹21.":"Each extra attempt costs about ₹21; attempt "+S.att+" of 3 used."}</span></div><button onclick="A.again()">Send out again</button>`;
+ if(P=="tohub")h+=`<div class="box"><b>Parcel inbound</b><span class="m">Rider ${S.nav?"is on the way to "+c.hubs[S.hub][0]:"is choosing a hub"}. ${S.unreach?"Customer unreachable after "+MISS+" calls. Customer told to contact the rider within 48 hours.":"Customer cancelled or refused."}</span></div>`;
+ if(["held","sell","go"].includes(P)||S.fin=="sold")h+=`<div class="box"><b>Divert eligibility</b><span class="m">${S.unreach?"✓ Customer unreachable ("+MISS+" missed calls)":S.refusedDoor?"✓ Customer refused at the door":"✓ Change of mind"}${S.unreach&&S.ph=="held"?" (order cancels if no contact in 48 hours)":""}<br>${c.price>=250?"✓":"✗"} Price above ₹250 floor<br>✓ Nearby sellers available<br>✓ Never offered to the refusing customer</span></div>`;
+ if(P=="held")h+=`<div class="box"><span class="chip c-w">Holding at ${c.hubs[S.hub][0]}</span><b>48-hour hold</b><span class="m">Ends ${S.holdEnd}. Use "Skip 48 hours" at the top.</span></div>`;
+ if(P=="sell")h+=`<div class="box"><b>${S.refusedDoor?"Order cancelled at the door":"Hold ended"}</b><span class="m">Eligible sellers sent to the rider:<br>${c.sell.map((x,i)=>(elig(x)?"✓ ":"✗ ")+x[0]+(elig(x)?(S.ask[i]=="yes"?" · ready to buy":S.ask[i]=="no"?" · declined":S.ask[i]=="wait"?" · calling":""):" · not opted in")).join("<br>")}</span></div>`;
+ if(P=="go")h+=`<div class="box"><b>Rider heading to ${c.sell[S.sel][0]}</b><span class="m">Buyer confirmed at ₹${c.sell[S.sel][3]}. ${eta(c.sell[S.sel][2])} min away.</span></div>`;
+ if(P=="ret")h+=`<div class="box"><b>Direct return queued</b><span class="m">${S.capped?"Three attempts used.":"Wrong or damaged item."} Goes back to the seller in a batch.</span></div><button onclick="A.ret()">Batch return (₹80)</button>`;
+ if(S.fin=="delivered"&&S.rx.st){const R=S.rx,tl=R.type=="ret"?"Return":"Exchange",need=RXP.includes(R.reason);
+  h+=`<div class="box"><b>${tl} request</b><span class="m">Reason: ${R.reason}${need?"":" · no photo needed, auto-approved"}</span>`+(need?`<div class="row" style="margin-top:6px"><div class="hero" style="flex-direction:column;padding:8px;text-align:center"><div class="img" style="width:100%;height:54px">📷</div><span class="m">Customer photo</span></div><div class="hero" style="flex-direction:column;padding:8px;text-align:center"><div class="img" style="width:100%;height:54px;background:var(--blue)">${c.em}</div><span class="m">Hub record (packed and shipped)</span></div></div>`:"")+(R.st=="pending"?`<span class="chip c-w">Cross-check needed</span><div class="row"><button onclick="A.rxok()">Photo matches, approve</button><button class="g" onclick="A.rxno()">Does not match, reject</button></div>`:R.st=="ok"?`<span class="chip c-ok">${need?"Verified and approved":"Approved"}</span>`:`<span class="chip c-x">Rejected</span>`)+`</div>`}
+ if(P=="done")h+=`<div class="box"><span class="chip c-ok">Closed</span><b>${{delivered:S.att>1?"Delivered on reattempt. Saved about ₹99 net.":"Delivered. Forward cost only.",sold:"Sold locally. Saved about ₹99 (₹21 instead of ₹120).",ret:"Batch return. ₹120 became ₹80, saved ₹40."}[S.fin]}</b>${S.fin=="sold"?`<span class="m">Divert is upside, not part of the base case.</span>`:""}</div>`;
+ E("")}
+function render(){const P=S.ph,a=P=="cart"?0:P=="new"?1:P=="out"||P=="door"||(P=="done"&&S.fin=="delivered")?2:["sell","go"].includes(P)||S.fin=="sold"?4:3;
+ $("#chips").innerHTML=Object.keys(SC).map(k=>`<button class="${S.k==k?"on":""}" onclick="reset('${k}')">${SC[k].n}</button>`).join("");
+ $("#pills").innerHTML=["Prevent","Route","Verify","Recover","Divert"].map((x,i)=>`<span class="pill ${i==a?"on":i<a?"done":""}">${i+1} ${x}</span>`).join("");
+ $("#skip").disabled=P!="held";$("#clk").textContent="Now: "+clk();
+ const s=(v,l)=>`<div class="stat"><b>${v}</b><span class="m">${l}</span></div>`;
+ riskPanel();$("#stats").innerHTML=s(M.orders,"Orders run")+s(M.del,"Delivered")+s(M.avoid,"Reverse legs avoided")+s(M.rto,"Returned (RTO)")+s("₹"+M.saved,"Reverse cost saved (gross)")+s("₹"+M.extra,"Extra attempt cost");
+ $("#guard").innerHTML=s("₹"+(M.saved-M.extra)+" net","Savings must exceed extra attempts (₹21 each)")+s("₹0 cut","Rider credit paid ₹"+M.cred+", no deductions")+s(M.orders?Math.round(M.taps/M.orders*100):0,"Customer taps per 100 orders (target: near zero)");
+ cust();rider();hub();
+ $("#rs").textContent={cart:"Idle",new:"Idle",out:"Assigned",door:"At door"}[P]||"Active";$("#hs").textContent={cart:"Waiting",new:"New order",out:"In transit",door:"At door"}[P]||"Live";
+ for(const k of["cust","rider","hub"]){const t=TT[k],e=$("#t-"+k);e.classList.toggle("on",!!t);e.innerHTML=t?`<b>from ${{cust:"customer",rider:"rider",hub:"hub",sys:"system"}[t[0]]}</b>${t[1]}`:""}
+ const N={cust:"Customer",rider:"Rider",hub:"Hub",sys:"System"};
+ $("#log").innerHTML=LOG.map(l=>`<li><s>${l.c}</s><b>${N[l.f]} → ${N[l.t]}</b> ${l.x}</li>`).join("")||`<li class="m">Nothing yet. Place the order in the customer app.</li>`}
+reset("a");
+</script></body></html>
